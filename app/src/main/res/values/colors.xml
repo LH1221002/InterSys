@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#A46F3E</color> <!--ToolBar-->
+    <color name="colorPrimaryDark">#92693F</color> <!--Uhrzeit + Akku #FBD490-->
+    <color name="colorAccent">#A46F3E</color> <!--Icon-->
+</resources>
