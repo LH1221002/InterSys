@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.media.Image;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
@@ -15,6 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -38,8 +40,23 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
-        FloatingActionButton fab2 = findViewById(R.id.fab2);
         final DrawingView drawingV = findViewById(R.id.view2);
+        final ImageView iv1 = findViewById(R.id.img1);
+        final ImageView iv2 = findViewById(R.id.img2);
+        final ImageView iv3 = findViewById(R.id.img3);
+        final ImageView iv4 = findViewById(R.id.img4);
+        ImageView[] ivls = {iv1,iv2,iv3,iv4};
+        for(int i=0; i<4; i++){
+            final ImageView iv = ivls[i];
+            iv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    drawingV.setBackgroundView(iv);
+                }
+            });
+        }
+
+        FloatingActionButton fab2 = findViewById(R.id.fab2);
         fab2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

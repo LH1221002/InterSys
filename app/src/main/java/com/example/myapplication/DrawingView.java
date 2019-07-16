@@ -2,13 +2,17 @@ package com.example.myapplication;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
 
 public class DrawingView extends View {
 
@@ -43,9 +47,21 @@ public class DrawingView extends View {
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeJoin(Paint.Join.ROUND);
         mPaint.setStrokeCap(Paint.Cap.ROUND);
-        mPaint.setStrokeWidth(40);
+        mPaint.setStrokeWidth(25);
     }
 
+    public void setBackgroundView(ImageView iv){
+        if (iv == null) throw new AssertionError();
+        Drawable drawable = iv.getDrawable();
+        BitmapDrawable bitmapDrawable = ((BitmapDrawable) drawable);
+        Bitmap bm = bitmapDrawable.getBitmap();
+        Bitmap mbm = bm.copy(Bitmap.Config.ARGB_8888, true);
+        //mCanvas = new Canvas(mbm);
+        mCanvas.drawBitmap(bm,190,210,mBitmapPaint);
+        //mPath = new Path();
+        //mBitmapPaint = new Paint(Paint.DITHER_FLAG);
+        invalidate();
+    }
     public void clearView(){
         mBitmap = Bitmap.createBitmap(mBitmap.getWidth(),mBitmap.getHeight() ,
                 Bitmap.Config.ARGB_8888);
