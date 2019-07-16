@@ -34,5 +34,16 @@
         app:fabSize="auto"
         app:srcCompat="@drawable/ic_artboard_copy" />
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab2"
+        android:layout_width="229dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|start"
+        android:layout_margin="@dimen/fab_margin"
+        app:backgroundTint="#FBD490"
+        app:borderWidth="0.5dp"
+        app:fabSize="auto"
+        app:srcCompat="@drawable/ic_clear" />
+
 
 </android.support.design.widget.CoordinatorLayout>

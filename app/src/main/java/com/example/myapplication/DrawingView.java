@@ -32,6 +32,10 @@ public class DrawingView extends View {
         circlePaint.setStyle(Paint.Style.STROKE);
         circlePaint.setStrokeJoin(Paint.Join.MITER);
         circlePaint.setStrokeWidth(4f);
+        setPaint();
+    }
+
+    private void setPaint(){
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
         mPaint.setDither(true);
@@ -40,7 +44,17 @@ public class DrawingView extends View {
         mPaint.setStrokeJoin(Paint.Join.ROUND);
         mPaint.setStrokeCap(Paint.Cap.ROUND);
         mPaint.setStrokeWidth(40);
+    }
 
+    public void clearView(){
+        mBitmap = Bitmap.createBitmap(mBitmap.getWidth(),mBitmap.getHeight() ,
+                Bitmap.Config.ARGB_8888);
+
+        mCanvas = new Canvas(mBitmap);
+        mPath = new Path();
+        mBitmapPaint = new Paint(Paint.DITHER_FLAG);
+
+       invalidate();
     }
 
     public DrawingView(Context c) {
@@ -69,6 +83,7 @@ public class DrawingView extends View {
 
         mBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         mCanvas = new Canvas(mBitmap);
+        mCanvas.save();
     }
 
     @Override

@@ -38,6 +38,14 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+        FloatingActionButton fab2 = findViewById(R.id.fab2);
+        final DrawingView drawingV = findViewById(R.id.view2);
+        fab2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                drawingV.clearView();
+            }
+        });
 
         //dv = new DrawingView(this);
 //        DisplayMetrics metrics = new DisplayMetrics();
