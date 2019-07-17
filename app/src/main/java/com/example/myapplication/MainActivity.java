@@ -1,28 +1,38 @@
 package com.example.myapplication;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.pm.PackageManager;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.graphics.Bitmap;
-import android.media.Image;
+import android.graphics.Canvas;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Set;
+import java.util.zip.GZIPOutputStream;
 
 public class MainActivity extends AppCompatActivity {
+    private BluetoothAdapter mBluetoothAdapter;
+    private BluetoothDevice mDevice;
+    private final static String TAG = "MainActivity";
+    private FloatingActionButton fab;
+    private DrawingView drawingV;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,22 +41,29 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
+        drawingV = findViewById(R.id.view2);
+        fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                saveFile();
-                Snackbar.make(view, "Saving Image...", Snackbar.LENGTH_LONG)
+
+                //saveFile();
+                initBluetooth();
+                findRaspberry();
+                onSend();
+                Snackbar.make(view, "Sending Image", Snackbar.LENGTH_SHORT)
                         .setAction("Action", null).show();
+
+
             }
         });
-        final DrawingView drawingV = findViewById(R.id.view2);
+
         final ImageView iv1 = findViewById(R.id.img1);
         final ImageView iv2 = findViewById(R.id.img2);
         final ImageView iv3 = findViewById(R.id.img3);
         final ImageView iv4 = findViewById(R.id.img4);
-        ImageView[] ivls = {iv1,iv2,iv3,iv4};
-        for(int i=0; i<4; i++){
+        ImageView[] ivls = {iv1, iv2, iv3, iv4};
+        for (int i = 0; i < 4; i++) {
             final ImageView iv = ivls[i];
             iv.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -64,85 +81,78 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //dv = new DrawingView(this);
-//        DisplayMetrics metrics = new DisplayMetrics();
-//        getWindowManager().getDefaultDisplay().getMetrics(metrics);
-//        int height = metrics.heightPixels;
-//        int width = metrics.widthPixels;
-//
-//        Bitmap mBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-//        Canvas mCanvas = new Canvas(mBitmap);
 
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+    }
+
+    public void onSend() {
+        String message = getSVG();
+        new MessageThread(mDevice, message).start();
 
     }
 
-    @SuppressLint("WrongConstant")
-    private void saveFile(){
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            // Permission is not granted
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-            } else {
-                // No explanation needed; request the permission
-
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        1);
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                        1);
-
-
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-            }
-        } else {
-            // Permission has already been granted
+    private void findRaspberry() {
+        Set<BluetoothDevice> pairedDevices = mBluetoothAdapter
+                .getBondedDevices();
+        for (BluetoothDevice device : pairedDevices) {
+            if (device.getName().equals("Jam Plotter"))
+                this.mDevice = device;
         }
+    }
 
-        View content = findViewById(R.id.view2);
-        content.setDrawingCacheEnabled(true);
-        content.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
-        Bitmap bitmap = content.getDrawingCache();
-        String path = Environment.getExternalStorageDirectory().getAbsolutePath();
-        String pathn = path+"/image.png";
-        File file = new File(pathn);
-        FileOutputStream ostream;
+    private void initBluetooth() {
+        Log.d(TAG, "Checking Bluetooth...");
+        if (mBluetoothAdapter == null) {
+            Log.d(TAG, "Device does not support Bluetooth");
+        } else {
+            Log.d(TAG, "Bluetooth supported");
+        }
+        if (!mBluetoothAdapter.isEnabled()) {
+            Log.d(TAG, "Bluetooth not enabled");
+        } else {
+            Log.d(TAG, "Bluetooth enabled");
+        }
+    }
+
+    public static byte[] compress(String data) throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream(data.length());
+        GZIPOutputStream gzip = new GZIPOutputStream(bos);
+        gzip.write(data.getBytes());
+        gzip.close();
+        byte[] compressed = bos.toByteArray();
+        bos.close();
+        return compressed;
+    }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    @SuppressLint("WrongConstant")
+    private String getSVG() {
+        Bitmap bitmap = drawingV.getExportedBitmap();
         try {
-            file.createNewFile();
-            ostream = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, ostream);
-            ostream.flush();
-            ostream.close();
-            Toast.makeText(getApplicationContext(), "image saved", 1000).show();
-            try {
-                String mySvg = ImageTracerAndroid.imageToSVG(pathn, null, ImageTracerAndroid.generatepalette(2));
-
-
-                /*
-                Hier wird die SVG gespeichert
-                 */
-
-
-                ImageTracerAndroid.saveString(path + "/imageAsSvg.svg", mySvg);
-                Toast.makeText(getApplicationContext(), "svg saved", 2000).show();
-            } catch(Exception e){
-                e.printStackTrace();
-                Toast.makeText(getApplicationContext(), "errorSVG", 3000).show();
-            }
+            String output = ImageTracerAndroid.imageToSVG(bitmap,null, ImageTracerAndroid.generatepalette(2));
+            return output;
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(getApplicationContext(), "error", 3000).show();
-
         }
+        return "-1";
+    }
+
+    public Bitmap toGrayscale(Bitmap bmpOriginal)
+    {
+        int width, height;
+        height = bmpOriginal.getHeight();
+        width = bmpOriginal.getWidth();
+
+        Bitmap bmpGrayscale = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(bmpGrayscale);
+        Paint paint = new Paint();
+        ColorMatrix cm = new ColorMatrix();
+        cm.setSaturation(0);
+        ColorMatrixColorFilter f = new ColorMatrixColorFilter(cm);
+        paint.setColorFilter(f);
+        c.drawBitmap(bmpOriginal, 0, 0, paint);
+        return bmpGrayscale;
     }
 
     @Override

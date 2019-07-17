@@ -30,14 +30,6 @@
                 android:src="@mipmap/like" />
 
             <ImageView
-                android:id="@+id/img2"
-                android:layout_width="157dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:contentDescription="@string/app_name"
-                android:src="@mipmap/morning" />
-
-            <ImageView
                 android:id="@+id/img3"
                 android:layout_width="157dp"
                 android:layout_height="match_parent"
@@ -61,14 +53,36 @@
         android:layout_height="0dp"
         android:layout_marginTop="22dp"
         android:src="@drawable/toastbackground"
+        app:layout_constraintStart_toStartOf="@+id/horizontalScrollView"
         app:layout_constraintTop_toTopOf="parent" />
 
     <view
         android:id="@+id/view2"
         class="com.example.myapplication.DrawingView"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginTop="50dp"
+        android:layout_width="0dp"
+        android:layout_height="337dp"
+        android:layout_marginStart="34dp"
+        android:layout_marginLeft="34dp"
+        android:layout_marginTop="76dp"
+        android:layout_marginEnd="34dp"
+        android:layout_marginRight="34dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/horizontalScrollView" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="20dp" />
+
+    <android.support.constraint.Barrier
+        android:id="@+id/barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="top"
+        tools:layout_editor_absoluteY="675dp" />
+
 
 </android.support.constraint.ConstraintLayout>

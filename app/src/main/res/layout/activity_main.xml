@@ -43,7 +43,7 @@
         app:backgroundTint="#FBD490"
         app:borderWidth="0.5dp"
         app:fabSize="auto"
-        app:srcCompat="@drawable/ic_clear" />
+         />
 
 
 </android.support.design.widget.CoordinatorLayout>
