@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.JamDrawer;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -16,64 +16,99 @@ import android.widget.ImageView;
 
 public class DrawingView extends View {
 
+
+    public Bitmap mBitmapsmall;
+    private Canvas mCanvassmall;
+    private Path mPathsmall;
+    private Paint mBitmapPaintsmall;
+    private Paint circlePaintsmall;
+    private Path circlePathsmall;
+    private Paint mPaintsmall;
+
+
+
+    Context context;
+
     public Bitmap mBitmap;
+
     private Canvas mCanvas;
     private Path mPath;
     private Paint mBitmapPaint;
-    Context context;
     private Paint circlePaint;
     private Path circlePath;
     private Paint mPaint;
 
-    private void doIt(Context c){
+    private void doIt(Context c) {
         context = c;
         mPath = new Path();
         mBitmapPaint = new Paint(Paint.DITHER_FLAG);
         circlePaint = new Paint();
         circlePath = new Path();
         circlePaint.setAntiAlias(true);
-        circlePaint.setColor(Color.rgb(203,74,72));
+        circlePaint.setColor(Color.rgb(203, 74, 72));
         circlePaint.setStyle(Paint.Style.STROKE);
         circlePaint.setStrokeJoin(Paint.Join.MITER);
         circlePaint.setStrokeWidth(4f);
+
+        mPathsmall = new Path();
+        mBitmapPaintsmall = new Paint(Paint.DITHER_FLAG);
+        circlePaintsmall = new Paint();
+        circlePathsmall = new Path();
+        circlePaintsmall.setAntiAlias(true);
+        circlePaintsmall.setColor(Color.rgb(203, 74, 72));
+        circlePaintsmall.setStyle(Paint.Style.STROKE);
+        circlePaintsmall.setStrokeJoin(Paint.Join.MITER);
+        circlePaintsmall.setStrokeWidth(1f);
+
         setPaint();
     }
 
-    private void setPaint(){
+    private void setPaint() {
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
         mPaint.setDither(true);
-        mPaint.setColor(Color.rgb(203,74,72));
+        mPaint.setColor(Color.rgb(203, 74, 72));
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeJoin(Paint.Join.ROUND);
         mPaint.setStrokeCap(Paint.Cap.ROUND);
         mPaint.setStrokeWidth(25f);
+
+        mPaintsmall = new Paint();
+        mPaintsmall.setAntiAlias(true);
+        mPaintsmall.setDither(true);
+        mPaintsmall.setColor(Color.rgb(203, 74, 72));
+        mPaintsmall.setStyle(Paint.Style.STROKE);
+        mPaintsmall.setStrokeJoin(Paint.Join.ROUND);
+        mPaintsmall.setStrokeCap(Paint.Cap.ROUND);
+        mPaintsmall.setStrokeWidth(5f);
     }
 
-    public void setBackgroundView(ImageView iv){
+    public void setBackgroundView(ImageView iv) {
         if (iv == null) throw new AssertionError();
         Drawable drawable = iv.getDrawable();
         BitmapDrawable bitmapDrawable = ((BitmapDrawable) drawable);
         Bitmap bm = bitmapDrawable.getBitmap();
         Bitmap mbm = bm.copy(Bitmap.Config.ARGB_8888, true);
         //mCanvas = new Canvas(mbm);
-        mCanvas.drawBitmap(bm,190,210,mBitmapPaint);
+        mCanvas.drawBitmap(bm, 50, 210, mBitmapPaint);
+        mCanvassmall.drawBitmap(bm, 50, 210, mBitmapPaint);
         //mPath = new Path();
         //mBitmapPaint = new Paint(Paint.DITHER_FLAG);
         invalidate();
     }
-    public Bitmap getExportedBitmap(){
-        Bitmap mitmap = Bitmap.createBitmap(mBitmap);
-        return addBorderToBitmap(mitmap,5,  Color.TRANSPARENT);
+
+    public Bitmap getExportedBitmap() {
+        Bitmap mitmap = Bitmap.createBitmap(mBitmapsmall);
+        return addBorderToBitmap(mitmap, 6, Color.TRANSPARENT);
 
     }
 
     // Custom method to add a border around bitmap
-    protected Bitmap addBorderToBitmap(Bitmap srcBitmap, int borderWidth, int borderColor){
+    protected Bitmap addBorderToBitmap(Bitmap srcBitmap, int borderWidth, int borderColor) {
         // Initialize a new Bitmap to make it bordered bitmap
         Bitmap dstBitmap = Bitmap.createBitmap(
-                srcBitmap.getWidth() + borderWidth*2, // Width
-                srcBitmap.getHeight() + borderWidth*2, // Height
+                srcBitmap.getWidth() + borderWidth * 2, // Width
+                srcBitmap.getHeight() + borderWidth * 2, // Height
                 Bitmap.Config.ARGB_8888 // Config
         );
 
@@ -93,6 +128,7 @@ public class DrawingView extends View {
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(borderWidth);
         paint.setAntiAlias(true);
+
 
         /*
             Rect
@@ -131,7 +167,7 @@ public class DrawingView extends View {
 
         */
         // Draw a rectangle as a border/shadow on canvas
-        canvas.drawRect(rect,paint);
+        canvas.drawRect(rect, paint);
 
         /*
             public void drawBitmap (Bitmap bitmap, float left, float top, Paint paint)
@@ -173,15 +209,23 @@ public class DrawingView extends View {
         return dstBitmap;
     }
 
-    public void clearView(){
-        mBitmap = Bitmap.createBitmap(mBitmap.getWidth(),mBitmap.getHeight() ,
+    public void clearView() {
+        mBitmap = Bitmap.createBitmap(mBitmap.getWidth(), mBitmap.getHeight(),
                 Bitmap.Config.ARGB_8888);
 
         mCanvas = new Canvas(mBitmap);
         mPath = new Path();
         mBitmapPaint = new Paint(Paint.DITHER_FLAG);
 
-       invalidate();
+
+        mBitmapsmall = Bitmap.createBitmap(mBitmap.getWidth(), mBitmap.getHeight(),
+                Bitmap.Config.ARGB_8888);
+
+        mCanvassmall = new Canvas(mBitmapsmall);
+        mPathsmall = new Path();
+        mBitmapPaintsmall = new Paint(Paint.DITHER_FLAG);
+
+        invalidate();
     }
 
     public DrawingView(Context c) {
@@ -189,12 +233,12 @@ public class DrawingView extends View {
         doIt(c);
     }
 
-    public DrawingView(Context context, AttributeSet attrs){
+    public DrawingView(Context context, AttributeSet attrs) {
         super(context, attrs);
         doIt(context);
     }
 
-    public DrawingView(Context context, AttributeSet attrs, int defStyleAttr){
+    public DrawingView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         doIt(context);
     }
@@ -211,6 +255,10 @@ public class DrawingView extends View {
         mBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         mCanvas = new Canvas(mBitmap);
         mCanvas.save();
+
+        mBitmapsmall = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        mCanvassmall = new Canvas(mBitmapsmall);
+        mCanvassmall.save();
     }
 
     @Override
@@ -221,6 +269,12 @@ public class DrawingView extends View {
 
         canvas.drawPath(mPath, mPaint);
         canvas.drawPath(circlePath, circlePaint);
+
+
+        canvas.drawBitmap(mBitmapsmall, 0, 0, mBitmapPaint);
+
+        canvas.drawPath(mPathsmall, mPaintsmall);
+        canvas.drawPath(circlePathsmall, circlePaintsmall);
     }
 
     private float mX, mY;
@@ -229,6 +283,9 @@ public class DrawingView extends View {
     private void touch_start(float x, float y) {
         mPath.reset();
         mPath.moveTo(x, y);
+        mPathsmall.reset();
+        mPathsmall.moveTo(x, y);
+
         mX = x;
         mY = y;
     }
@@ -238,21 +295,28 @@ public class DrawingView extends View {
         float dy = Math.abs(y - mY);
         if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
             mPath.quadTo(mX, mY, (x + mX) / 2, (y + mY) / 2);
+            mPathsmall.quadTo(mX, mY, (x + mX) / 2, (y + mY) / 2);
             mX = x;
             mY = y;
 
             circlePath.reset();
+            circlePathsmall.reset();
             circlePath.addCircle(mX, mY, 30, Path.Direction.CW);
+            circlePathsmall.addCircle(mX, mY, 30, Path.Direction.CW);
         }
     }
 
     private void touch_up() {
         mPath.lineTo(mX, mY);
+        mPathsmall.lineTo(mX, mY);
         circlePath.reset();
+        circlePathsmall.reset();
         // commit the path to our offscreen
         mCanvas.drawPath(mPath, mPaint);
+        mCanvassmall.drawPath(mPathsmall, mPaintsmall);
         // kill this so we don't double draw
         mPath.reset();
+        mPathsmall.reset();
     }
 
     @Override
@@ -285,13 +349,11 @@ public class DrawingView extends View {
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);
 
         int size;
-        if(widthMode == MeasureSpec.EXACTLY && widthSize > 0){
+        if (widthMode == MeasureSpec.EXACTLY && widthSize > 0) {
             size = widthSize;
-        }
-        else if(heightMode == MeasureSpec.EXACTLY && heightSize > 0){
+        } else if (heightMode == MeasureSpec.EXACTLY && heightSize > 0) {
             size = heightSize;
-        }
-        else{
+        } else {
             size = widthSize < heightSize ? widthSize : heightSize;
         }
 

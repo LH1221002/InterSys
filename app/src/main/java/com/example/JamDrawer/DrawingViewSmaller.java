@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.JamDrawer;
 
 import android.content.Context;
 import android.graphics.Bitmap;

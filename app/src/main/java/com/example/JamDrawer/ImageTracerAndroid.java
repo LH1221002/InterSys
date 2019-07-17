@@ -37,7 +37,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to http://unlicense.org/
 
  */
-package com.example.myapplication;
+package com.example.JamDrawer;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
